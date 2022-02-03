@@ -1,0 +1,35 @@
+contract Escrow{
+
+address seller;
+address buyer ;
+address arbitrator;
+uint purchasePrice;
+uint refundConfirmationCount;
+uint purchaseConfirmationCount;
+
+mapping(address =>bool) public hasConfirmedPurchase;
+mapping(address =>bool) public hasConfirmedRefund;
+
+constructor (
+address seller_,
+address buyer_,
+address arbitrator_
+
+){
+
+    seller = seller_;
+    buyer = buyer_;
+    arbitrator = arbitrator_;
+}
+ modifier isRegisteredParticipant {
+    require(msg.sender == seller || msg.sender == buyer || msg.sender == arbitrator, "Only registered participants can call this");
+
+    _;
+   }
+function depositIntoEscrow() external payable{
+    require(purchasePrice==0,"Already purchased");
+    require(msg.sender == buyer,"only buyer can purchase items");
+    purchasePrice = msg.value;
+}
+
+}
