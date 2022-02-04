@@ -26,10 +26,33 @@ address arbitrator_
 
     _;
    }
+
 function depositIntoEscrow() external payable{
     require(purchasePrice==0,"Already purchased");
     require(msg.sender == buyer,"only buyer can purchase items");
     purchasePrice = msg.value;
+}
+function confirmPurchase() external isRegisteredParticipant{
+  require(!hasConfirmedPurchase[msg.sender],"Already confirmed");
+  hasConfirmedPurchase[msg.sender] = true;
+  purchaseConfirmationCount += 1;
+   if(purchaseConfirmationCount >= 2){
+       _sendfundsto(seller);
+   }
+}
+function _sendfundsto(address recipient) private {
+(bool success,) = recipient.call{value: purchasePrice}("");
+require(success,"sending funds failed");
+}
+function confirmRefund() external isRegisteredParticipant{
+   
+    require(!hasConfirmedRefund[msg.sender],"Already refunded");
+    hasConfirmedRefund[msg.sender] = true;
+    refundConfirmationCount += 1;
+    if (purchaseConfirmationCount >= 2) {
+       _sendfundsto(seller);
+     }
+
 }
 
 }
