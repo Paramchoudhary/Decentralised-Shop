@@ -1,4 +1,4 @@
-contract Escrow{
+contract DeShop{
 
 address seller;
 address buyer ;
